@@ -23,7 +23,6 @@ public class TVPage extends BasePage {
     public void setManufacturer(String item){
         CheckBox manufacturerCB  = new CheckBox(By.xpath(String.format(MANUFACTURER,item)));
         manufacturerCB.moveAndClickByAction();
-//        manufacturerCB.click();
     }
     public void setPriceFrom(String item, String pricefroms){
         TextBox pricefrom  = new TextBox(By.xpath(String.format(PRICE_FROM,item)));
