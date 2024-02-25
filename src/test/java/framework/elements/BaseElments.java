@@ -8,6 +8,7 @@ import org.openqa.selenium.TimeoutException;
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.interactions.Actions;
 import org.openqa.selenium.support.ui.ExpectedConditions;
+import org.openqa.selenium.support.ui.Select;
 import org.openqa.selenium.support.ui.WebDriverWait;
 
 import java.time.Duration;
@@ -79,7 +80,10 @@ public abstract class BaseElments {
         actions.moveToElement(element)
                 .click()
                 .perform();
-
+    }
+    public void select(String value){
+        Select select = new Select(element);
+        select.selectByVisibleText(value);
     }
 
     public void moveToElement() {
@@ -137,6 +141,12 @@ public abstract class BaseElments {
         } else {
             System.out.println(getElementType() + ": " + by + "is not dispalayed");
             return false;
+        }
+    }
+    public void clickViaJS() {
+        if (isElementPresent()) {
+            ((JavascriptExecutor) getDriver()).executeScript("arguments[0].style.border='3px solid blue'", element);
+            ((JavascriptExecutor) getDriver()).executeScript("arguments[0].click();", element);
         }
     }
 }

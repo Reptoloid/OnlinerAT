@@ -5,7 +5,7 @@
         <parameter name="manufacturer" value="Samsung"></parameter>
         <parameter name="diagonalFrom" value="40"></parameter>
         <parameter name="diagonalTo" value="50"></parameter>
-        <parameter name="priceTo" value="2000"></parameter>
+        <parameter name="priceTo" value="1000"></parameter>
         <parameter name="resolution" value="1920x1080(Full HD)"></parameter>
         <classes>
             <class name="onliner.tests.FiltrationTest"/>
