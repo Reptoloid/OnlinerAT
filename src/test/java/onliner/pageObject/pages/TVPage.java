@@ -13,7 +13,7 @@ import static framework.Browser.getDriver;
 import static framework.elements.BaseElments.refreshPage;
 
 public class TVPage extends BasePage {
-    SoftAssert softAssert = new SoftAssert();
+    SoftAssert softAssert = new SoftAssert(); //Можно добавить в BasePage
     private static final String PAGE_LOCATOR ="//h1";
     private static final String MANUFACTURER ="//div[@class='catalog-form__checkbox-sign' and text()='%s']";
     private static final String PRICE_TO ="//input[@placeholder='%s']";
@@ -121,8 +121,8 @@ public class TVPage extends BasePage {
     }
 
     public void validationOfAllFilters(String manufature, String resolution, double price,String diagonalFrom, String diagonalTo){
-        //checkManufacturerFilterApplied(manufature);
-        //checkResolutionFilterApplied(resolution);
+        checkManufacturerFilterApplied(manufature);
+        checkResolutionFilterApplied(resolution);
         checkIfManufacturerMatch(manufature);
         //checkResolution(resolution);
         //checkPrices(price);

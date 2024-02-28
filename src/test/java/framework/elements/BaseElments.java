@@ -26,7 +26,7 @@ public abstract class BaseElments {
     private WebElement element;
 
 
-    private WebElement elements;
+    private List<WebElement> elements;
 
 
     public BaseElments(By by) {
@@ -120,7 +120,7 @@ public abstract class BaseElments {
         try {
             getDriver().manage().timeouts().implicitlyWait(new PropertyReader("config.properties").
                     getIntProperty("timeout"), TimeUnit.SECONDS);
-            elements = getDriver().findElement(by);
+            elements = getDriver().findElements(by);
             return !element.isDisplayed();
         } catch (Exception e) {
             System.out.println(getElementType() + ": " + by + "is not present. Exeption - " + e.getMessage());
