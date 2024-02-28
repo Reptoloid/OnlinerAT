@@ -2,29 +2,38 @@ package onliner.pageObject.pages;
 
 import framework.BasePage;
 import framework.elements.CheckBox;
-import framework.elements.Label;
 import framework.elements.TextBox;
 import org.openqa.selenium.By;
 import org.openqa.selenium.WebElement;
+import org.testng.asserts.SoftAssert;
 
 import java.util.List;
-import java.util.Random;
-import java.util.stream.Collectors;
 
 import static framework.Browser.getDriver;
-import static framework.Browser.waitForPageLoad;
+import static framework.elements.BaseElments.refreshPage;
 
 public class TVPage extends BasePage {
+    SoftAssert softAssert = new SoftAssert();
     private static final String PAGE_LOCATOR ="//h1";
-    private static final String MANUFACTURER ="//div[@class='catalog-form__checkbox-sign' and text()='%s']/../../input";
-    private static final String PRICE_FROM ="//input[@placeholder='%s']";
+    private static final String MANUFACTURER ="//div[@class='catalog-form__checkbox-sign' and text()='%s']";
     private static final String PRICE_TO ="//input[@placeholder='%s']";
-    private static final String RESOLUTION ="//div[@class='catalog-form__checkbox-sign' and text()='%s']/../../input";
-    private static final String DIAGONAL_FROM ="//option[@value = '%s']";
-    private static final String DIAGONAL_TO ="//*[@id=\"container\"]/div/div/div/div/div[2]/div[1]/div/div/div[3]/div/div[2]/div[2]/div[15]/div/div[2]/div[2]/div[2]/div/div[2]/div/select/option[@value='%s']";
-    private static final String NAME_OF_ITEM ="//a[@class='catalog-form__link catalog-form__link_primary-additional catalog-form__link_base-additional catalog-form__link_font-weight_semibold catalog-form__link_nodecor' and contains(text(),'Samsung')]";
-    private static final List<String> PRODUCT_LIST = getDriver().findElements(By.xpath("//div[@class='catalog-form__offers-unit catalog-form__offers-unit_primary']"))
-            .stream().map(e -> e.getText()).collect(Collectors.toList());
+    private static final String RESOLUTION ="//div[@class='catalog-form__checkbox-sign' and text()='%s']";
+    private static final TextBox CB_DIAGONAL_FROM = new TextBox(By.xpath("//div[@class='input-style input-style_primary input-style_small input-style_arrow_bottom catalog-form__input catalog-form__input_width_full input-style_placeholder']//select[@class='input-style__real']"));
+    private static final TextBox TXB_DIAGONAL_TO = new TextBox(By.xpath("//div[2 and @class='input-style input-style_primary input-style_small input-style_arrow_bottom catalog-form__input catalog-form__input_width_full input-style_placeholder']//select[@class='input-style__real']"));
+
+    private static final TextBox APPLIED_FILTER_MANUFACTURE = new TextBox(By.xpath("//div[@class='catalog-form__tag-list']/div[1]"));
+
+    private static final TextBox APPLIED_FILTER_RESOLUTION = new TextBox(By.xpath("//div[@class='catalog-form__tag-list']/div[2]"));
+
+    private static final List<WebElement> FILTERED_DIAGONAL_AND_RESOLUTION = getDriver().findElements(By.xpath("//div[@class='catalog-form__parameter-part catalog-form__parameter-part_1']/div[1]"));
+
+    private static final TextBox SPECIAL_PRICE_OFFER = new TextBox(By.xpath("//div[@class='catalog-form__description catalog-form__description_huge-additional " +
+            "catalog-form__description_font-weight_bold catalog-form__description_condensed-other catalog-form__description_error-alter']//span[2]"));
+
+    private static final List<WebElement> PRICES = getDriver().findElements(By.xpath("//div[@class='catalog-form__description catalog-form__description_huge-additional " +
+                "catalog-form__description_font-weight_bold catalog-form__description_condensed-other catalog-form__description_primary']"));
+    private static final TextBox TXT_ITEM = new TextBox(By.xpath("//div[contains(@class,'catalog-form__description_base-additional')]/a"));
+
     private WebElement productItem;
     public static String productName;
 
@@ -34,12 +43,9 @@ public class TVPage extends BasePage {
 
     public void setManufacturer(String item){
         CheckBox manufacturerCB  = new CheckBox(By.xpath(String.format(MANUFACTURER,item)));
+        manufacturerCB.scrollIntoView();
         manufacturerCB.clickViaJS();
 
-    }
-    public void setPriceFrom(String item, String pricefroms){
-        TextBox pricefrom  = new TextBox(By.xpath(String.format(PRICE_FROM,item)));
-        pricefrom.sendKeys(pricefroms);
     }
     public void setPriceTo(String item, String pricetos){
         TextBox priceto  = new TextBox(By.xpath(String.format(PRICE_TO,item)));
@@ -51,22 +57,78 @@ public class TVPage extends BasePage {
 
     }
     public void setDiagonalFrom(String item){
-        Label diagonalFrom  = new Label(By.xpath(String.format(DIAGONAL_FROM,item)));
-        diagonalFrom.click();
+        CB_DIAGONAL_FROM.sendKeys(item);
     }
     public void setDiagonalTo(String item){
-        Label diagonalTo  = new Label(By.xpath(String.format(DIAGONAL_TO,item)));
-        diagonalTo.click();
+       TXB_DIAGONAL_TO.sendKeys(item);
+
     }
-    public void sleep() throws InterruptedException {
-        Thread.sleep(100000);
+    public void sleep(){
+        try {
+            Thread.sleep(10000);
+        } catch (InterruptedException e) {
+            throw new RuntimeException(e);
+        }
     }
-    public WebElement productSelection() {
-        Random random = new Random();
-        int i = random.nextInt(1, PRODUCT_LIST.size())-1;
-        productName = PRODUCT_LIST.get(i);
-        System.out.println(productName);
-        return productItem = getDriver().findElement(By.xpath(String.format(NAME_OF_ITEM, productName)));
+
+    private void checkManufacturerFilterApplied(String manufacture) {
+        softAssert.assertEquals(APPLIED_FILTER_MANUFACTURE.getText(), manufacture ,
+                "Excpected result: " + manufacture +". Actual result: " + APPLIED_FILTER_MANUFACTURE.getText());
+
+    }
+
+    private void checkResolutionFilterApplied(String resolution) {
+        softAssert.assertEquals(APPLIED_FILTER_RESOLUTION.getText(), resolution ,
+                "Excpected result: " + resolution +". Actual result: " + APPLIED_FILTER_RESOLUTION.getText());
+    }
+
+
+    private void checkIfManufacturerMatch(String manufacturer) {
+        refreshPage();
+        List<WebElement> listOFItems = TXT_ITEM.getElements();
+        for (WebElement w : listOFItems) {
+            softAssert.assertTrue(w.getText().contains(manufacturer),
+                    "Expected result: " + manufacturer +". Actual result: " + APPLIED_FILTER_MANUFACTURE.getText());
+        }
+    }
+
+    private void checkResolution(String resolution) {
+        for (WebElement w : FILTERED_DIAGONAL_AND_RESOLUTION) {
+            System.out.println(w.getText());
+            softAssert.assertEquals(APPLIED_FILTER_RESOLUTION.getText(), resolution ,
+                    "Excpected result: " + resolution +". Actual result: " + APPLIED_FILTER_RESOLUTION.getText());
+        }
+    }
+
+    private void checkInches(double diagonalFrom, double diagonalTo) {
+        for (WebElement w : FILTERED_DIAGONAL_AND_RESOLUTION) {
+            double diagonal = Double.parseDouble(w.getText().substring(0, 2));
+            softAssert.assertTrue(diagonal >= diagonalFrom & diagonal <= diagonalTo);
+        }
+    }
+
+    private void checkSpecialOfferPrice(double priceTo) {
+        double specialOfferPrice = Double.parseDouble(SPECIAL_PRICE_OFFER.getText().replaceAll("[\\s.а-я]", "").replaceAll(",", "."));
+        softAssert.assertTrue(specialOfferPrice <= priceTo);
+    }
+
+    private void checkPrices(double priceTo) {
+        for (WebElement w : PRICES) {
+            double prices = Double.parseDouble(w.getText().replaceAll("[\\s.а-я]", "").replaceAll(",", "."));
+            System.out.println(prices);
+            softAssert.assertTrue(prices <= priceTo);
+        }
+    }
+
+    public void validationOfAllFilters(String manufature, String resolution, double price,String diagonalFrom, String diagonalTo){
+        //checkManufacturerFilterApplied(manufature);
+        //checkResolutionFilterApplied(resolution);
+        checkIfManufacturerMatch(manufature);
+        //checkResolution(resolution);
+        //checkPrices(price);
+      //  checkInches(diagonalFrom, diagonalTo);
+        softAssert.assertAll();
+
     }
 
 }

@@ -23,12 +23,11 @@ public class FiltrationTest extends BaseTest {
 
         TVPage tvPage = new TVPage();
         tvPage.setManufacturer("Samsung");
-        tvPage.setPriceFrom("от", "1000");
         tvPage.setPriceTo("до","2000");
         tvPage.setResolution("1920x1080 (Full HD)");
-        tvPage.setDiagonalFrom("400");
-        tvPage.setDiagonalTo("500");
+        tvPage.setDiagonalFrom("40\"");
+        tvPage.setDiagonalTo("50\"");
         tvPage.sleep();
-        tvPage.productSelection();
+        tvPage.validationOfAllFilters("Samsung","1920x1080 (Full HD)",2000,"40\"","50\"");
     }
 }

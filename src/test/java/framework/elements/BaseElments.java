@@ -12,6 +12,7 @@ import org.openqa.selenium.support.ui.Select;
 import org.openqa.selenium.support.ui.WebDriverWait;
 
 import java.time.Duration;
+import java.util.List;
 import java.util.concurrent.TimeUnit;
 
 import static framework.Browser.getDriver;
@@ -41,7 +42,7 @@ public abstract class BaseElments {
         return element;
     }
 
-    public WebElement getElements() {
+    public List<WebElement> getElements() {
         areElementsPresent();
         return elements;
     }
@@ -82,6 +83,7 @@ public abstract class BaseElments {
                 .perform();
     }
     public void select(String value){
+        isElementPresent();
         Select select = new Select(element);
         select.selectByVisibleText(value);
     }
@@ -148,5 +150,14 @@ public abstract class BaseElments {
             ((JavascriptExecutor) getDriver()).executeScript("arguments[0].style.border='3px solid blue'", element);
             ((JavascriptExecutor) getDriver()).executeScript("arguments[0].click();", element);
         }
+    }
+    public void scrollIntoView() {
+        isElementPresent();
+        ((JavascriptExecutor) getDriver()).executeScript("arguments[0].scrollIntoView(true);", element);
+    }
+
+    public static void refreshPage() {
+        getDriver().navigate().refresh();
+        waitForPageLoad();
     }
 }
