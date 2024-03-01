@@ -27,13 +27,12 @@ public class TVPage extends BasePage {
     private static final TextBox APPLIED_FILTER_RESOLUTION = new TextBox(By.xpath("//div[@class='catalog-form__tag-list']//div[@class='button-style button-style_either button-style_small catalog-form__button catalog-form__button_tag' and text()='1920x1080 (Full HD)']"));
     private static final String RESULT = "//div[@class='catalog-form__tag-list']//div[@class='button-style button-style_either button-style_small catalog-form__button catalog-form__button_tag' and text()='1920x1080 (Full HD)']";
 
-    private static final List<WebElement> FILTERED_DIAGONAL_AND_RESOLUTION = getDriver().findElements(By.xpath("//div[@class='catalog-form__parameter-part catalog-form__parameter-part_1']/div[1]"));
+        private static final List<WebElement> FILTERED_DIAGONAL_AND_RESOLUTION = getDriver().findElements(By.xpath("//div[@class='catalog-form__parameter-part catalog-form__parameter-part_1']/div[1]"));
 
     private static final TextBox SPECIAL_PRICE_OFFER = new TextBox(By.xpath("//div[@class='catalog-form__description catalog-form__description_huge-additional " +
             "catalog-form__description_font-weight_bold catalog-form__description_condensed-other catalog-form__description_error-alter']//span[2]"));
 
-    private static final List<WebElement> PRICES = getDriver().findElements(By.xpath("//div[@class='catalog-form__description catalog-form__description_huge-additional " +
-                "catalog-form__description_font-weight_bold catalog-form__description_condensed-other catalog-form__description_primary']"));
+    private static final List<WebElement> PRICES = getDriver().findElements(By.xpath("//div[@class='catalog-form__description catalog-form__description_huge-additional catalog-form__description_font-weight_bold catalog-form__description_condensed-other catalog-form__description_primary']"));
     private static final TextBox TXT_ITEM = new TextBox(By.xpath("//div[contains(@class,'catalog-form__description_base-additional')]/a"));
 
     private WebElement productItem;
@@ -97,9 +96,10 @@ public class TVPage extends BasePage {
     private void checkResolution(String resolution) {
         refreshPage();
         for (WebElement w : FILTERED_DIAGONAL_AND_RESOLUTION) {
-            APPLIED_FILTER_RESOLUTION.getText().substring(APPLIED_FILTER_RESOLUTION.getText().lastIndexOf("\""));
+            String newResol = APPLIED_FILTER_RESOLUTION.getText().replace("43\"","");
+            System.out.println(newResol);
             System.out.println(w.getText());
-            softAssert.assertEquals(APPLIED_FILTER_RESOLUTION, resolution ,
+            softAssert.assertEquals(newResol, resolution ,
                     "Excpected result: " + resolution +". Actual result: " + APPLIED_FILTER_RESOLUTION.getText());
         }
     }
@@ -129,7 +129,7 @@ public class TVPage extends BasePage {
         checkResolutionFilterApplied(resolution);
         checkIfManufacturerMatch(manufature);
         checkResolution(resolution);
-        //checkPrices(price);
+        checkPrices(price);
         //checkInches(diagonalFrom, diagonalTo);
         softAssert.assertAll();
 
