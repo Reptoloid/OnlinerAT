@@ -29,5 +29,6 @@ public class FiltrationTest extends BaseTest {
         tvPage.setDiagonalTo("50\"");
         tvPage.sleep();
         tvPage.validationOfAllFilters("Samsung","1920x1080 (Full HD)",2000,"40\"","50\"");
+
     }
 }

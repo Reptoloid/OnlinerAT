@@ -14,6 +14,7 @@ import static framework.elements.BaseElments.refreshPage;
 
 public class TVPage extends BasePage {
     SoftAssert softAssert = new SoftAssert(); //Можно добавить в BasePage
+    String res;
     private static final String PAGE_LOCATOR ="//h1";
     private static final String MANUFACTURER ="//div[@class='catalog-form__checkbox-sign' and text()='%s']";
     private static final String PRICE_TO ="//input[@placeholder='%s']";
@@ -21,9 +22,10 @@ public class TVPage extends BasePage {
     private static final TextBox CB_DIAGONAL_FROM = new TextBox(By.xpath("//div[@class='input-style input-style_primary input-style_small input-style_arrow_bottom catalog-form__input catalog-form__input_width_full input-style_placeholder']//select[@class='input-style__real']"));
     private static final TextBox TXB_DIAGONAL_TO = new TextBox(By.xpath("//div[2 and @class='input-style input-style_primary input-style_small input-style_arrow_bottom catalog-form__input catalog-form__input_width_full input-style_placeholder']//select[@class='input-style__real']"));
 
-    private static final TextBox APPLIED_FILTER_MANUFACTURE = new TextBox(By.xpath("//div[@class='catalog-form__tag-list']/div[1]"));
+    private static final TextBox APPLIED_FILTER_MANUFACTURE = new TextBox(By.xpath("//div[@class='catalog-form__tag-list']//div[@class='button-style button-style_either button-style_small catalog-form__button catalog-form__button_tag' and text()='Samsung']"));
 
-    private static final TextBox APPLIED_FILTER_RESOLUTION = new TextBox(By.xpath("//div[@class='catalog-form__tag-list']/div[2]"));
+    private static final TextBox APPLIED_FILTER_RESOLUTION = new TextBox(By.xpath("//div[@class='catalog-form__tag-list']//div[@class='button-style button-style_either button-style_small catalog-form__button catalog-form__button_tag' and text()='1920x1080 (Full HD)']"));
+    private static final String RESULT = "//div[@class='catalog-form__tag-list']//div[@class='button-style button-style_either button-style_small catalog-form__button catalog-form__button_tag' and text()='1920x1080 (Full HD)']";
 
     private static final List<WebElement> FILTERED_DIAGONAL_AND_RESOLUTION = getDriver().findElements(By.xpath("//div[@class='catalog-form__parameter-part catalog-form__parameter-part_1']/div[1]"));
 
@@ -93,9 +95,11 @@ public class TVPage extends BasePage {
     }
 
     private void checkResolution(String resolution) {
+        refreshPage();
         for (WebElement w : FILTERED_DIAGONAL_AND_RESOLUTION) {
+            APPLIED_FILTER_RESOLUTION.getText().substring(APPLIED_FILTER_RESOLUTION.getText().lastIndexOf("\""));
             System.out.println(w.getText());
-            softAssert.assertEquals(APPLIED_FILTER_RESOLUTION.getText(), resolution ,
+            softAssert.assertEquals(APPLIED_FILTER_RESOLUTION, resolution ,
                     "Excpected result: " + resolution +". Actual result: " + APPLIED_FILTER_RESOLUTION.getText());
         }
     }
@@ -124,9 +128,9 @@ public class TVPage extends BasePage {
         checkManufacturerFilterApplied(manufature);
         checkResolutionFilterApplied(resolution);
         checkIfManufacturerMatch(manufature);
-        //checkResolution(resolution);
+        checkResolution(resolution);
         //checkPrices(price);
-      //  checkInches(diagonalFrom, diagonalTo);
+        //checkInches(diagonalFrom, diagonalTo);
         softAssert.assertAll();
 
     }
