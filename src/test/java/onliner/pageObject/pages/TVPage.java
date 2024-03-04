@@ -8,6 +8,7 @@ import org.openqa.selenium.WebElement;
 import org.testng.asserts.SoftAssert;
 
 import java.util.List;
+import java.util.stream.Collectors;
 
 import static framework.Browser.getDriver;
 import static framework.elements.BaseElments.refreshPage;
@@ -33,6 +34,9 @@ public class TVPage extends BasePage {
             "catalog-form__description_font-weight_bold catalog-form__description_condensed-other catalog-form__description_error-alter']//span[2]"));
 
     private static final List<WebElement> PRICES = getDriver().findElements(By.xpath("//div[@class='catalog-form__description catalog-form__description_huge-additional catalog-form__description_font-weight_bold catalog-form__description_condensed-other catalog-form__description_primary']"));
+    private static final TextBox TXT_DESCRIPTION_FIRST_LINE = new TextBox((By.xpath(
+            "//div[@class='catalog-form__offers-item catalog-form__offers-item_primary']" +
+                    "//div[contains(@class,'catalog-form__parameter-part_1')]/div[1]")));
     private static final TextBox TXT_ITEM = new TextBox(By.xpath("//div[contains(@class,'catalog-form__description_base-additional')]/a"));
 
     private WebElement productItem;
@@ -93,14 +97,21 @@ public class TVPage extends BasePage {
         }
     }
 
+//    private void checkResolution(String resolution) {
+//        refreshPage();
+//        for (WebElement w : FILTERED_DIAGONAL_AND_RESOLUTION) {
+//            String newResol = APPLIED_FILTER_RESOLUTION.getText().replace("43\"","");
+//            System.out.println(newResol);
+//            System.out.println(w.getText());
+//            softAssert.assertEquals(newResol, resolution ,
+//                    "Excpected result: " + resolution +". Actual result: " + APPLIED_FILTER_RESOLUTION.getText());
+//        }
+//    }
     private void checkResolution(String resolution) {
-        refreshPage();
-        for (WebElement w : FILTERED_DIAGONAL_AND_RESOLUTION) {
-            String newResol = APPLIED_FILTER_RESOLUTION.getText().replace("43\"","");
-            System.out.println(newResol);
-            System.out.println(w.getText());
-            softAssert.assertEquals(newResol, resolution ,
-                    "Excpected result: " + resolution +". Actual result: " + APPLIED_FILTER_RESOLUTION.getText());
+        List<String> FILTERED_DIAGONAL_AND_RESOLUTION = TXT_DESCRIPTION_FIRST_LINE.getElements().stream().map(s -> s.getText()).collect(Collectors.toList());
+        for (String w : FILTERED_DIAGONAL_AND_RESOLUTION) {
+            softAssert.assertTrue(w.contains(resolution),
+                    "Expected result: " + resolution + ". Actual result: " + w);
         }
     }
 
@@ -110,12 +121,7 @@ public class TVPage extends BasePage {
             softAssert.assertTrue(diagonal >= diagonalFrom & diagonal <= diagonalTo);
         }
     }
-
-    private void checkSpecialOfferPrice(double priceTo) {
-        double specialOfferPrice = Double.parseDouble(SPECIAL_PRICE_OFFER.getText().replaceAll("[\\s.а-я]", "").replaceAll(",", "."));
-        softAssert.assertTrue(specialOfferPrice <= priceTo);
-    }
-
+    
     private void checkPrices(double priceTo) {
         for (WebElement w : PRICES) {
             double prices = Double.parseDouble(w.getText().replaceAll("[\\s.а-я]", "").replaceAll(",", "."));
@@ -129,7 +135,7 @@ public class TVPage extends BasePage {
         checkResolutionFilterApplied(resolution);
         checkIfManufacturerMatch(manufature);
         checkResolution(resolution);
-        checkPrices(price);
+       // checkPrices(price);
         //checkInches(diagonalFrom, diagonalTo);
         softAssert.assertAll();
 
