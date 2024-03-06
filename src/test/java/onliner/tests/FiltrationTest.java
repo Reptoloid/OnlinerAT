@@ -8,11 +8,10 @@ import onliner.pageObject.pages.TVPage;
 import org.testng.annotations.Parameters;
 import org.testng.annotations.Test;
 
-
 public class FiltrationTest extends BaseTest {
-
     @Test
-    public void checkFiltration() throws InterruptedException {
+    @Parameters({"manufacturer" , "resolution" , "priceTo", "diagonalFrom", "diagonalTo"})
+    public void checkFiltration(String manufacturer, String resolution, double priceTo, double diagonalFrom, double diagonalTo) {
         HomePage homePage = new HomePage();
         homePage.header.mainMenuNavigation("Каталог");
 
@@ -22,12 +21,12 @@ public class FiltrationTest extends BaseTest {
         catalogPage.tv_click("Телевизоры");
 
         TVPage tvPage = new TVPage();
-        tvPage.setManufacturer("Samsung");
-        tvPage.setPriceTo("до","2000");
-        tvPage.setResolution("1920x1080 (Full HD)");
-        tvPage.setDiagonalFrom("40\"");
-        tvPage.setDiagonalTo("50\"");
-        tvPage.validationOfAllFilters("Samsung","1920x1080 (Full HD)",2000,"40\"","50\"");
+        tvPage.setManufacturer(manufacturer);
+        tvPage.setPriceTo("до",priceTo);
+        tvPage.setResolution(resolution);
+        tvPage.setDiagonalFrom(diagonalFrom+"\"");
+        tvPage.setDiagonalTo(diagonalTo+"\"");
+        tvPage.validationOfAllFilters(manufacturer,resolution,priceTo,diagonalFrom,diagonalTo);
 
     }
 }
